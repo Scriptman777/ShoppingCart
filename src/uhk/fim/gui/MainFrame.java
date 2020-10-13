@@ -4,19 +4,20 @@ import javax.swing.*;
 
 public class MainFrame extends JFrame {
 
-    public MainFrame() {
+    public MainFrame(int wdth, int hght) {
+        super("PRO2 - Shopping cart");
+        setSize(wdth, hght);
         initFrame();
         initGUI();
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
     public void initFrame() {
-        setTitle("PRO2 - Shopping cart");
-        setSize(800, 600);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setVisible(true);
-    }
 
+    }
+    //Koment!
     public void initGUI() {
+
 
     }
 }
