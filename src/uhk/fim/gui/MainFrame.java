@@ -9,6 +9,10 @@ import java.awt.event.ActionListener;
 public class MainFrame extends JFrame implements ActionListener {
     JButton btnInputAdd;
     JButton btnInputDelete;
+    JTextField txtInputName;
+    JTextField txtNumber;
+    JTextField txtPrice;
+
 
     public MainFrame(int wdth, int hght) {
         super("PRO2 - Shopping cart");
@@ -30,19 +34,19 @@ public class MainFrame extends JFrame implements ActionListener {
     JPanel panelFooter = new JPanel();
 
     JLabel lblInputName = new JLabel("Název: ");
-    JTextField txtInputField = new JTextField("",15);
+    txtInputName = new JTextField("",15);
     JLabel lblNumber = new JLabel("Počet kusů: ");
-    JTextField txtNumber = new JTextField("",5);
+    txtNumber = new JTextField("",5);
     JLabel lblPrice = new JLabel("Cena za kus: ");
-    JTextField txtPrice = new JTextField("",5);
+    txtPrice = new JTextField("",5);
 
     btnInputAdd = new JButton("Přidat");
     btnInputAdd.addActionListener(this);
     btnInputDelete = new JButton("Smazat");
-    btnInputAdd.addActionListener(this);
+    btnInputDelete.addActionListener(this);
 
     panelInputs.add(lblInputName);
-    panelInputs.add(txtInputField);
+    panelInputs.add(txtInputName);
     panelInputs.add(lblNumber);
     panelInputs.add(txtNumber);
     panelInputs.add(lblPrice);
@@ -63,6 +67,7 @@ public class MainFrame extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource() == btnInputAdd) {
             //TODO: print out "přidán produkt: Název, cena, počet"
+            System.out.println("Přidán produkt: " + txtInputName.getText() + ", " + txtPrice.getText() + " Kč/kus, " + txtNumber.getText() + " kusů");
 
 
         } else if (actionEvent.getSource() == btnInputDelete){
