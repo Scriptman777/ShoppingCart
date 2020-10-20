@@ -1,1 +1,1 @@
-Tohle je jakože README
+David Továrek

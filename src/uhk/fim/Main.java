@@ -11,7 +11,6 @@ public class Main {
             public void run() {
                 MainFrame mainFrame = new MainFrame(800,600);
                 mainFrame.setVisible(true);
-
             }
         });
     }
