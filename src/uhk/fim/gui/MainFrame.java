@@ -15,6 +15,7 @@ public class MainFrame extends JFrame implements ActionListener{
     JTextField txtInputName;
     JTextField txtPrice;
     JSpinner spNumber;
+    JLabel lblTotalPrice;
     MainFrame mainFrame = this;
 
     ShoppingCart shoppingCart;
@@ -74,7 +75,7 @@ public class MainFrame extends JFrame implements ActionListener{
     panelInputs.add(btnInputDelete);
 
     //Label dole
-    JLabel lblTotalPrice = new JLabel("Celková cena");
+    lblTotalPrice = new JLabel("Celková cena: 0,0 Kč");
     panelFooter.add(lblTotalPrice,BorderLayout.WEST);
 
     //ADD PANELS
@@ -87,17 +88,42 @@ public class MainFrame extends JFrame implements ActionListener{
 
     }
 
+    public void updatePrice()  {
+        double price = 0;
+        for (ShoppingCartItem itm: shoppingCart.getItems()) {
+            price += (itm.getPricePerPiece() * itm.getPieces());
+        }
+        lblTotalPrice.setText("Celková cena: " + price +  " Kč");
+
+    }
+
 
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource() == btnInputAdd) {
             //TODO: Validovat věci
-            ShoppingCartItem item = new ShoppingCartItem(txtInputName.getText(),Double.parseDouble(txtPrice.getText()) ,(int)spNumber.getValue());
-            JOptionPane.showMessageDialog(this,"Přidáno","Úspěch",JOptionPane.INFORMATION_MESSAGE);
-            shoppingCart.addItem(item);
+            if (!txtInputName.getText().isEmpty()) {
+                try {
+                    ShoppingCartItem item = new ShoppingCartItem(txtInputName.getText(),Double.parseDouble(txtPrice.getText()) ,(int)spNumber.getValue());
+                    JOptionPane.showMessageDialog(this,"Přidáno","Úspěch",JOptionPane.INFORMATION_MESSAGE);
+                    shoppingCart.addItem(item);
+                }
+                catch (NumberFormatException err)
+                {
+                    JOptionPane.showMessageDialog(this,"Číslo musí být zadáno s desetinnou tečkou","CHYBA",JOptionPane.ERROR_MESSAGE);
+                }
+
+            }
+            else {
+                JOptionPane.showMessageDialog(this,"Musí být zadán název","CHYBA",JOptionPane.ERROR_MESSAGE);
+            }
+
+
+
 
             shoppingCartTableModel.fireTableDataChanged();
+            updatePrice();
 
         } else if (actionEvent.getSource() == btnInputDelete){
 

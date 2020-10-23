@@ -8,7 +8,6 @@ import javax.swing.table.AbstractTableModel;
 public class ShoppingCartTableModel extends AbstractTableModel {
     private ShoppingCart cart;
 
-    //TODO: Přidat sloupec s celkovou cenou
 
     @Override
     public int getRowCount() {
@@ -17,7 +16,7 @@ public class ShoppingCartTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return 3;
+        return 4;
     }
 
     @Override
@@ -30,6 +29,8 @@ public class ShoppingCartTableModel extends AbstractTableModel {
                 return item.getPricePerPiece();
             case 2:
                 return item.getPieces();
+            case 3:
+                return (item.getPieces() * item.getPricePerPiece());
             default:
                 return null;
         }
@@ -48,6 +49,8 @@ public class ShoppingCartTableModel extends AbstractTableModel {
                 return "Cena/kus";
             case 2:
                 return "Počet kusů";
+            case 3:
+                return "Celková cena";
             default:
                 return null;
         }
