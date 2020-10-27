@@ -14,6 +14,14 @@ public class ShoppingCart {
         return items;
     }
 
+    public double getTotalPrice() {
+        double price = 0;
+        for (ShoppingCartItem itm: items) {
+            price += (itm.getPricePerPiece() * itm.getPieces());
+        }
+        return price;
+    }
+
     public void addItem(ShoppingCartItem item) {
         boolean exists = false;
 
@@ -21,7 +29,7 @@ public class ShoppingCart {
 
         for (ShoppingCartItem itm: items) {
 
-            if (item.getName().equals(itm.getName()) && itm.getPricePerPiece() == itm.getPricePerPiece()) {
+            if (item.getName().equals(itm.getName()) && item.getPricePerPiece() == itm.getPricePerPiece()) {
                 exists = true;
                 ShoppingCartItem temp = itm;
                 index = items.indexOf(temp);

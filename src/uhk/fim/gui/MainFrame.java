@@ -44,6 +44,10 @@ public class MainFrame extends JFrame implements ActionListener{
     JPanel panelTable = new JPanel(new BorderLayout());
     JPanel panelFooter = new JPanel(new BorderLayout());
 
+    //MenuBar
+        createMenuBar();
+
+
     //Input
     JLabel lblInputName = new JLabel("Název: ");
     txtInputName = new JTextField("",15);
@@ -75,7 +79,7 @@ public class MainFrame extends JFrame implements ActionListener{
     panelInputs.add(btnInputDelete);
 
     //Label dole
-    lblTotalPrice = new JLabel("Celková cena: 0,0 Kč");
+    lblTotalPrice = new JLabel();
     panelFooter.add(lblTotalPrice,BorderLayout.WEST);
 
     //ADD PANELS
@@ -88,13 +92,42 @@ public class MainFrame extends JFrame implements ActionListener{
 
     }
 
-    public void updatePrice()  {
-        double price = 0;
-        for (ShoppingCartItem itm: shoppingCart.getItems()) {
-            price += (itm.getPricePerPiece() * itm.getPieces());
-        }
-        lblTotalPrice.setText("Celková cena: " + price +  " Kč");
+    private void createMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
 
+
+        JMenu fileMenu = new JMenu("Soubor");
+        fileMenu.add(new AbstractAction("Nový nákupní seznam") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+
+            }
+        });
+        fileMenu.add(new AbstractAction("Otevřít") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+
+            }
+        });
+        fileMenu.add(new AbstractAction("Uložit") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+
+            }
+        });
+        menuBar.add(fileMenu);
+
+        JMenu aboutMenu = new JMenu("O programu");
+        menuBar.add(aboutMenu);
+
+
+
+
+        setJMenuBar(menuBar);
+    }
+
+    public void updatePrice()  {
+        lblTotalPrice.setText("Celková cena: " + String.format("%.2f",shoppingCart.getTotalPrice())  +  " Kč");
     }
 
 
@@ -103,33 +136,33 @@ public class MainFrame extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource() == btnInputAdd) {
             //TODO: Validovat věci
-            if (!txtInputName.getText().isEmpty()) {
-                try {
-                    ShoppingCartItem item = new ShoppingCartItem(txtInputName.getText(),Double.parseDouble(txtPrice.getText()) ,(int)spNumber.getValue());
-                    JOptionPane.showMessageDialog(this,"Přidáno","Úspěch",JOptionPane.INFORMATION_MESSAGE);
-                    shoppingCart.addItem(item);
-                }
-                catch (NumberFormatException err)
-                {
-                    JOptionPane.showMessageDialog(this,"Číslo musí být zadáno s desetinnou tečkou","CHYBA",JOptionPane.ERROR_MESSAGE);
-                }
-
-            }
-            else {
-                JOptionPane.showMessageDialog(this,"Musí být zadán název","CHYBA",JOptionPane.ERROR_MESSAGE);
-            }
-
-
-
-
-            shoppingCartTableModel.fireTableDataChanged();
-            updatePrice();
+            addToCart();
 
         } else if (actionEvent.getSource() == btnInputDelete){
 
 
         }
 
+    }
+
+    public void addToCart() {
+        if (!txtInputName.getText().isBlank()) {
+            try {
+                ShoppingCartItem item = new ShoppingCartItem(txtInputName.getText().trim(),Double.parseDouble(txtPrice.getText().replace(',','.')) ,(int)spNumber.getValue());
+                JOptionPane.showMessageDialog(this,"Přidáno","Úspěch",JOptionPane.INFORMATION_MESSAGE);
+                shoppingCart.addItem(item);
+            }
+            catch (NumberFormatException err)
+            {
+                JOptionPane.showMessageDialog(this,"Počet kusů nebo cena není zadána správně","CHYBA",JOptionPane.ERROR_MESSAGE);
+            }
+
+        }
+        else {
+            JOptionPane.showMessageDialog(this,"Musí být zadán název","CHYBA",JOptionPane.ERROR_MESSAGE);
+        }
+        shoppingCartTableModel.fireTableDataChanged();
+        updatePrice();
     }
 
 
