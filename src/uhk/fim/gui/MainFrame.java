@@ -1,13 +1,21 @@
 package uhk.fim.gui;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 import uhk.fim.model.ShoppingCart;
 import uhk.fim.model.ShoppingCartItem;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.xml.parsers.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 
 public class MainFrame extends JFrame implements ActionListener{
     JButton btnInputAdd;
@@ -106,12 +114,13 @@ public class MainFrame extends JFrame implements ActionListener{
         fileMenu.add(new AbstractAction("Otevřít") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-
+            //TODO: LOAD FILE HERE
             }
         });
         fileMenu.add(new AbstractAction("Uložit") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                saveFileCsv();
 
             }
         });
@@ -164,6 +173,117 @@ public class MainFrame extends JFrame implements ActionListener{
         shoppingCartTableModel.fireTableDataChanged();
         updatePrice();
     }
+
+    //Tohle tu teoreticky nemá být
+
+    private void saveFileCsv() {
+        JFileChooser jeff = new JFileChooser();
+        if (jeff.showSaveDialog(this) == JFileChooser.APPROVE_OPTION){
+            String fileName = jeff.getSelectedFile().getAbsolutePath();
+
+            try {
+                BufferedWriter bfw = new BufferedWriter(new FileWriter(fileName));
+
+                for (ShoppingCartItem item: shoppingCart.getItems()) {
+
+                    bfw.write(item.getName()+";"+item.getPricePerPiece()+";"+item.getPieces());
+                    bfw.newLine();
+
+
+                }
+                bfw.close();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
+
+    }
+/*
+    private void loadFileXmlSax() {
+        try {
+            //TODO complete
+            String pathname = "TODO";
+            CharArrayWriter content = new CharArrayWriter();
+            SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+            parser.parse(new File(pathname),new DefaultHandler()
+            {
+                @Override
+                public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+                    //System.out.println("Start: " + qName);
+                    content.reset();
+                }
+
+                @Override
+                public void endElement(String uri, String localName, String qName) throws SAXException {
+                   // System.out.println("End: " + qName);
+
+                }
+
+                @Override
+                public void characters(char[] ch, int start, int length) throws SAXException {
+                    super.characters(ch, start, length);
+                    content.write(ch,start,length);
+                }
+            });
+
+
+
+
+
+
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void loadFileDom(){
+
+        try {
+            String pathname = "TODO";
+
+
+            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            Document doc = builder.parse(new File(pathname));
+
+
+            Node root = doc.getFirstChild();
+            short nodeType = root.getNodeType();
+
+            if (root.hasChildNodes()){
+                NodeList list = root.getChildNodes();
+                for (int i = 0; i < list.getLength(); i++){
+                    Node nextNode = list.item(i);
+
+                }
+
+            }
+
+
+
+
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+*/
+
+
 
 
 }
