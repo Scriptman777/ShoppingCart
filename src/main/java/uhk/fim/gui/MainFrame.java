@@ -1,6 +1,10 @@
 package uhk.fim.gui;
 
-import org.w3c.dom.Document;
+import com.google.gson.Gson;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentFactory;
+import org.dom4j.io.SAXReader;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.Attributes;
@@ -16,6 +20,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.net.URL;
 
 public class MainFrame extends JFrame implements ActionListener{
     JButton btnInputAdd;
@@ -122,6 +127,12 @@ public class MainFrame extends JFrame implements ActionListener{
             public void actionPerformed(ActionEvent actionEvent) {
                 saveFileCsv();
 
+            }
+        });
+        fileMenu.add(new AbstractAction("Načti JSON") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                loadJson();
             }
         });
         menuBar.add(fileMenu);
@@ -283,7 +294,34 @@ public class MainFrame extends JFrame implements ActionListener{
 
 */
 
+private void loadFileXmlDom4J() {
+    DocumentFactory df = DocumentFactory.getInstance();
+    SAXReader reader = new SAXReader(df);
 
+    try {
+
+        org.dom4j.Document doc = reader.read(new File("")); //TODO add path
+
+
+    } catch (DocumentException e) {
+        e.printStackTrace();
+    }
+
+}
+
+private void loadJson() {
+    Gson gson = new Gson();
+    try {
+        ShoppingCart jsonCart = gson.fromJson(new InputStreamReader(
+                new URL("https://lide.uhk.cz/fim/student/benesja4/shoppingCart.json").openStream()
+        ),ShoppingCart.class);
+
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+
+
+}
 
 
 }
