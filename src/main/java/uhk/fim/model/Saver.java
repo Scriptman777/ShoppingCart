@@ -9,7 +9,7 @@ import java.util.Iterator;
 
 public class Saver {
 
-    public static void save(ShoppingCart shoppingCart, String fileName) throws InvalidPathException {
+    public static void save(ShoppingCart shoppingCart, String fileName) throws Exception {
         int dotLocation = fileName.lastIndexOf('.');
         String extension = fileName.substring(dotLocation);
 
@@ -25,7 +25,7 @@ public class Saver {
 
     }
 
-    public static ShoppingCart load(String fileName) throws InvalidPathException{
+    public static ShoppingCart load(String fileName) throws Exception{
         int dotLocation = fileName.lastIndexOf('.');
         String extension = fileName.substring(dotLocation);
 

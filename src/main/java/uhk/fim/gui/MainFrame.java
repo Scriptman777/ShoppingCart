@@ -41,15 +41,27 @@ public class MainFrame extends JFrame implements ActionListener{
     public MainFrame(int wdth, int hght) {
         super("PRO2 - Shopping cart");
         setSize(wdth, hght);
-        initFrame();
+
         initGUI();
         shoppingCart = new ShoppingCart();
         shoppingCartTableModel.setCart(shoppingCart);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        initData();
     }
 
-    public void initFrame() {
+    public void initData() {
+        File file = new File("./src/main/resources/data.csv");
+        ShoppingCart newCart = new ShoppingCart();
+        try {
+            newCart = Saver.load(file.getAbsolutePath());
+        }
+        catch (Exception err){
 
+        }
+        this.shoppingCart = newCart;
+        this.shoppingCartTableModel.setCart(newCart);
+        shoppingCartTableModel.fireTableDataChanged();
+        updatePrice();
     }
 
     public void initGUI() {
@@ -128,6 +140,13 @@ public class MainFrame extends JFrame implements ActionListener{
         fileMenu.add(new AbstractAction("Uložit") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                saveInteral();
+
+            }
+        });
+        fileMenu.add(new AbstractAction("Uložit jako") {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
                 saveFile();
 
             }
@@ -171,7 +190,7 @@ public class MainFrame extends JFrame implements ActionListener{
             }
             catch (NumberFormatException err)
             {
-                JOptionPane.showMessageDialog(this,"Počet kusů nebo cena není zadána správně","CHYBA",JOptionPane.ERROR_MESSAGE);
+                displayError(err,UserAction.ADDING);
             }
 
         }
@@ -194,7 +213,8 @@ public class MainFrame extends JFrame implements ActionListener{
         }
     }
 
-    //Načtení
+
+    //Uložení
     private void saveFile() {
         JFileChooser jeff = new JFileChooser();
         if (jeff.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
@@ -202,24 +222,61 @@ public class MainFrame extends JFrame implements ActionListener{
             try {
                 Saver.save(shoppingCart,fileName);
             }
-            catch (InvalidPathException err){
-
+            catch (Exception err){
+                displayError(err,UserAction.SAVING);
             }
 
         }
     }
 
-    //Uložení
+    //Uložení do interního csv
+    public void saveInteral() {
+        File file = new File("./src/main/resources/data.csv");
+        try {
+            Saver.save(shoppingCart,file.getAbsolutePath());
+        }
+        catch (Exception err){
+            displayError(err,UserAction.SAVING);
+        }
+
+    }
+
+    //Načtení
     private void loadFile() {
         JFileChooser jeff = new JFileChooser();
         if (jeff.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            ShoppingCart newCart = new ShoppingCart();
             String fileName = jeff.getSelectedFile().getAbsolutePath();
-            ShoppingCart newCart = Saver.load(fileName);
+            try {
+               newCart = Saver.load(fileName);
+            }
+            catch (Exception err){
+                displayError(err,UserAction.LOADING);
+            }
             this.shoppingCart = newCart;
             this.shoppingCartTableModel.setCart(newCart);
             shoppingCartTableModel.fireTableDataChanged();
             updatePrice();
         }
+    }
+
+    private void displayError(Exception err,int context) {
+
+        switch (context) {
+            case UserAction.SAVING:
+                JOptionPane.showMessageDialog(this,"Při ukládání došlo k chybě " + err.getMessage(),"Chyba",JOptionPane.ERROR_MESSAGE);
+                break;
+            case UserAction.LOADING:
+                JOptionPane.showMessageDialog(this,"Při načítaní došlo k chybě " + err.getMessage(),"Chyba",JOptionPane.ERROR_MESSAGE);
+                break;
+            case UserAction.ADDING:
+                JOptionPane.showMessageDialog(this,"Počet kusů nebo cena není zadána správně " + err.getMessage(),"Chyba",JOptionPane.ERROR_MESSAGE);
+                break;
+
+        }
+
+
+
     }
 
 
