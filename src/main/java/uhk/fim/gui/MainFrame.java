@@ -10,6 +10,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+import uhk.fim.model.Saver;
 import uhk.fim.model.ShoppingCart;
 import uhk.fim.model.ShoppingCartItem;
 
@@ -21,6 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.URL;
+import java.nio.file.InvalidPathException;
 
 public class MainFrame extends JFrame implements ActionListener{
     JButton btnInputAdd;
@@ -29,10 +31,11 @@ public class MainFrame extends JFrame implements ActionListener{
     JTextField txtPrice;
     JSpinner spNumber;
     JLabel lblTotalPrice;
+    JTable table;
     MainFrame mainFrame = this;
 
     ShoppingCart shoppingCart;
-    ShoppingCartTableModel shoppingCartTableModel  = new ShoppingCartTableModel();;
+    ShoppingCartTableModel shoppingCartTableModel  = new ShoppingCartTableModel();
 
 
     public MainFrame(int wdth, int hght) {
@@ -70,7 +73,7 @@ public class MainFrame extends JFrame implements ActionListener{
     txtPrice = new JTextField("",5);
 
     //Tabulka
-    JTable table = new JTable();
+    table = new JTable();
     table.setModel(shoppingCartTableModel);
     panelTable.add(new JScrollPane(table),BorderLayout.CENTER);
 
@@ -113,28 +116,23 @@ public class MainFrame extends JFrame implements ActionListener{
         fileMenu.add(new AbstractAction("Nový nákupní seznam") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-
+                newList();
             }
         });
         fileMenu.add(new AbstractAction("Otevřít") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-            //TODO: LOAD FILE HERE
+            loadFile();
             }
         });
         fileMenu.add(new AbstractAction("Uložit") {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                saveFileCsv();
+                saveFile();
 
             }
         });
-        fileMenu.add(new AbstractAction("Načti JSON") {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                loadJson();
-            }
-        });
+
         menuBar.add(fileMenu);
 
         JMenu aboutMenu = new JMenu("O programu");
@@ -155,7 +153,6 @@ public class MainFrame extends JFrame implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource() == btnInputAdd) {
-            //TODO: Validovat věci
             addToCart();
 
         } else if (actionEvent.getSource() == btnInputDelete){
@@ -185,143 +182,49 @@ public class MainFrame extends JFrame implements ActionListener{
         updatePrice();
     }
 
-    //Tohle tu teoreticky nemá být
+    //Nový košík
+    private void newList() {
+        int answer = JOptionPane.showConfirmDialog(this,"Košík bude smazán, chcete pokračovat?");
+        if (answer == 0) {
+            ShoppingCart newCart = new ShoppingCart();
+            this.shoppingCart = newCart;
+            this.shoppingCartTableModel.setCart(newCart);
+            shoppingCartTableModel.fireTableDataChanged();
+            updatePrice();
+        }
+    }
 
-    private void saveFileCsv() {
+    //Načtení
+    private void saveFile() {
         JFileChooser jeff = new JFileChooser();
-        if (jeff.showSaveDialog(this) == JFileChooser.APPROVE_OPTION){
+        if (jeff.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             String fileName = jeff.getSelectedFile().getAbsolutePath();
-
             try {
-                BufferedWriter bfw = new BufferedWriter(new FileWriter(fileName));
-
-                for (ShoppingCartItem item: shoppingCart.getItems()) {
-
-                    bfw.write(item.getName()+";"+item.getPricePerPiece()+";"+item.getPieces());
-                    bfw.newLine();
-
-
-                }
-                bfw.close();
-
-            } catch (IOException e) {
-                e.printStackTrace();
+                Saver.save(shoppingCart,fileName);
             }
-
-
-        }
-
-
-    }
-/*
-    private void loadFileXmlSax() {
-        try {
-            //TODO complete
-            String pathname = "TODO";
-            CharArrayWriter content = new CharArrayWriter();
-            SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
-            parser.parse(new File(pathname),new DefaultHandler()
-            {
-                @Override
-                public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-                    //System.out.println("Start: " + qName);
-                    content.reset();
-                }
-
-                @Override
-                public void endElement(String uri, String localName, String qName) throws SAXException {
-                   // System.out.println("End: " + qName);
-
-                }
-
-                @Override
-                public void characters(char[] ch, int start, int length) throws SAXException {
-                    super.characters(ch, start, length);
-                    content.write(ch,start,length);
-                }
-            });
-
-
-
-
-
-
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void loadFileDom(){
-
-        try {
-            String pathname = "TODO";
-
-
-            DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document doc = builder.parse(new File(pathname));
-
-
-            Node root = doc.getFirstChild();
-            short nodeType = root.getNodeType();
-
-            if (root.hasChildNodes()){
-                NodeList list = root.getChildNodes();
-                for (int i = 0; i < list.getLength(); i++){
-                    Node nextNode = list.item(i);
-
-                }
+            catch (InvalidPathException err){
 
             }
 
-
-
-
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-
-
     }
 
-*/
-
-private void loadFileXmlDom4J() {
-    DocumentFactory df = DocumentFactory.getInstance();
-    SAXReader reader = new SAXReader(df);
-
-    try {
-
-        org.dom4j.Document doc = reader.read(new File("")); //TODO add path
-
-
-    } catch (DocumentException e) {
-        e.printStackTrace();
-    }
-
-}
-
-private void loadJson() {
-    Gson gson = new Gson();
-    try {
-        ShoppingCart jsonCart = gson.fromJson(new InputStreamReader(
-                new URL("https://lide.uhk.cz/fim/student/benesja4/shoppingCart.json").openStream()
-        ),ShoppingCart.class);
-
-    } catch (IOException e) {
-        e.printStackTrace();
+    //Uložení
+    private void loadFile() {
+        JFileChooser jeff = new JFileChooser();
+        if (jeff.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            String fileName = jeff.getSelectedFile().getAbsolutePath();
+            ShoppingCart newCart = Saver.load(fileName);
+            this.shoppingCart = newCart;
+            this.shoppingCartTableModel.setCart(newCart);
+            shoppingCartTableModel.fireTableDataChanged();
+            updatePrice();
+        }
     }
 
 
-}
+
+
 
 
 }

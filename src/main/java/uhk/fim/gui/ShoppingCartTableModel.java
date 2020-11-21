@@ -36,6 +36,7 @@ public class ShoppingCartTableModel extends AbstractTableModel {
         }
     }
 
+
     public void setCart(ShoppingCart cart) {
         this.cart = cart;
     }
