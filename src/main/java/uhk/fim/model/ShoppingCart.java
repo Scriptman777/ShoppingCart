@@ -22,6 +22,17 @@ public class ShoppingCart {
         return price;
     }
 
+    public double getBoughtPrice() {
+        double price = 0;
+        for (ShoppingCartItem itm: items) {
+            if (itm.isBought()) {
+                price += (itm.getPricePerPiece() * itm.getPieces());
+            }
+
+        }
+        return price;
+    }
+
     public void addItem(ShoppingCartItem item) {
         boolean exists = false;
 

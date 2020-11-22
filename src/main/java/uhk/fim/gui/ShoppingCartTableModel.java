@@ -16,7 +16,7 @@ public class ShoppingCartTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return 4;
+        return 5;
     }
 
     @Override
@@ -31,9 +31,45 @@ public class ShoppingCartTableModel extends AbstractTableModel {
                 return item.getPieces();
             case 3:
                 return (item.getPieces() * item.getPricePerPiece());
+            case 4:
+                return item.isBought();
             default:
                 return null;
         }
+    }
+
+    @Override
+    public Class getColumnClass(int column) {
+        switch (column) {
+            case 0:
+                return String.class;
+            case 1:
+                return Double.class;
+            case 2:
+                return Integer.class;
+            case 3:
+                return Double.class;
+            case 4:
+                return Boolean.class;
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public boolean isCellEditable(int row, int column) {
+        if (column == 4) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void setValueAt(Object value, int row, int col) {
+        ShoppingCartItem item = cart.getItems().get(row);
+        //Protože jde upravovat jen hodnota bought, můžu si dovolit přetypovat na bool. Ale správně to rozhodně není.
+        item.setBought((boolean)value);
+
     }
 
 
@@ -52,6 +88,8 @@ public class ShoppingCartTableModel extends AbstractTableModel {
                 return "Počet kusů";
             case 3:
                 return "Celková cena";
+            case 4:
+                return "Zakoupeno";
             default:
                 return null;
         }

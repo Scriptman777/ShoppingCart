@@ -20,6 +20,8 @@ import javax.xml.parsers.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.InvalidPathException;
@@ -87,6 +89,12 @@ public class MainFrame extends JFrame implements ActionListener{
     //Tabulka
     table = new JTable();
     table.setModel(shoppingCartTableModel);
+    table.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            updatePrice();
+        }
+    });
     panelTable.add(new JScrollPane(table),BorderLayout.CENTER);
 
 
@@ -164,7 +172,17 @@ public class MainFrame extends JFrame implements ActionListener{
     }
 
     public void updatePrice()  {
-        lblTotalPrice.setText("Celková cena: " + String.format("%.2f",shoppingCart.getTotalPrice())  +  " Kč");
+
+        String labeltext = "";
+
+        labeltext += "Celková cena: " + String.format("%.2f",shoppingCart.getTotalPrice())  +  " Kč";
+        labeltext += " | ";
+        labeltext += "Cena zakoupených : " + String.format("%.2f",shoppingCart.getBoughtPrice())  +  " Kč";
+        labeltext += " | ";
+        labeltext += "Rozdíl : " + String.format("%.2f",(shoppingCart.getTotalPrice()-shoppingCart.getBoughtPrice()))  +  " Kč";
+
+
+        lblTotalPrice.setText(labeltext);
     }
 
 

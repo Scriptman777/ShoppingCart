@@ -1,6 +1,6 @@
-Housky;2.0;5
-Telefon;6000.0;1
-Pivo;15.0;14
-CocaCola;35.0;3
-Notebook;9000.0;1
-Test;1.0;1
+Housky;2.0;5;true
+Telefon;6000.0;1;true
+Pivo;15.0;14;true
+CocaCola;35.0;3;true
+Notebook;9000.0;1;true
+Test;1.0;1;true

@@ -47,7 +47,7 @@ public class Saver {
             while ((itemRow = csvReader.readLine()) != null) {
 
                 String[] itemLine = itemRow.split(";");
-                ShoppingCartItem item = new ShoppingCartItem(itemLine[0],Double.parseDouble(itemLine[1]),Integer.parseInt(itemLine[2]));
+                ShoppingCartItem item = new ShoppingCartItem(itemLine[0],Double.parseDouble(itemLine[1]),Integer.parseInt(itemLine[2]),Boolean.parseBoolean(itemLine[3]));
                 outputCart.addItem(item);
 
             }
@@ -70,7 +70,7 @@ public class Saver {
                 BufferedWriter bfw = new BufferedWriter(new FileWriter(fileName));
 
                 for (ShoppingCartItem item: shoppingCart.getItems()) {
-                    bfw.write(item.getName()+";"+item.getPricePerPiece()+";"+item.getPieces());
+                    bfw.write(item.getName()+";"+item.getPricePerPiece()+";"+item.getPieces()+";"+item.isBought());
                     bfw.newLine();
                 }
                 bfw.close();
@@ -96,7 +96,8 @@ public class Saver {
                 String name = item.attributeValue("Name");
                 String PPP = item.attributeValue("PricePerPiece");
                 String amount = item.attributeValue("Pieces");
-                outputCart.addItem(new ShoppingCartItem(name,Double.parseDouble(PPP),Integer.parseInt(amount)));
+                String bought = item.attributeValue("Bought");
+                outputCart.addItem(new ShoppingCartItem(name,Double.parseDouble(PPP),Integer.parseInt(amount),Boolean.parseBoolean(bought)));
             }
 
         } catch (DocumentException e) {
@@ -118,6 +119,7 @@ public class Saver {
             eleItem.addAttribute("Name",item.getName());
             eleItem.addAttribute("PricePerPiece",Double.toString(item.getPricePerPiece()));
             eleItem.addAttribute("Pieces",Integer.toString(item.getPieces()));
+            eleItem.addAttribute("Bought",Boolean.toString(item.isBought()));
         }
         try {
             FileWriter out = new FileWriter(fileName);
